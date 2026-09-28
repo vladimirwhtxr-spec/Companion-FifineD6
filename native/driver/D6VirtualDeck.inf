@@ -1,0 +1,56 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=HIDClass
+ClassGuid={745A17A0-74D3-11D0-B6FE-00A0C90F57DA}
+Provider=%Provider%
+CatalogFile=D6VirtualDeck.cat
+DriverVer=09/18/2026,0.1.0.0
+PnpLockdown=1
+
+[Manufacturer]
+%Provider%=Models,NTamd64.10.0
+
+[Models.NTamd64.10.0]
+%DeviceDesc%=Install,ROOT\D6VirtualDeck
+
+[DestinationDirs]
+CopyDriver=13
+
+[SourceDisksNames]
+1=%DiskName%,,,
+
+[SourceDisksFiles]
+D6VirtualDeck.sys=1
+
+[Install.NT]
+CopyFiles=CopyDriver
+
+[CopyDriver]
+D6VirtualDeck.sys
+
+[Install.NT.HW]
+AddReg=Hardware
+
+[Hardware]
+HKR,,LowerFilters,0x00010000,"vhf"
+
+[Install.NT.Services]
+AddService=D6VirtualDeck,0x00000002,Service
+
+[Service]
+DisplayName=%DeviceDesc%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%13%\D6VirtualDeck.sys
+
+[Install.NT.Wdf]
+KmdfService=D6VirtualDeck,Wdf
+
+[Wdf]
+KmdfLibraryVersion=$KMDFVERSION$
+
+[Strings]
+Provider="D6 Virtual Deck Research"
+DeviceDesc="D6 Virtual Deck (experimental)"
+DiskName="D6 Virtual Deck Driver"

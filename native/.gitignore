@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+driver/out/
+driver/obj/
+*.log
+diagnostic.json
+screen_map.json
+*.pfx
+*.cer
+*.cat
+*.sys

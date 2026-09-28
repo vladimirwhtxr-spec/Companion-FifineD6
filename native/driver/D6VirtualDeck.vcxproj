@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BF420927-0521-4637-972E-C1E1265E771C}</ProjectGuid>
+    <RootNamespace>D6VirtualDeck</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Driver</ConfigurationType><DriverType>KMDF</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <TargetVersion>Windows10</TargetVersion><DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <TargetName>D6VirtualDeck</TargetName>
+    <OutDir>$(ProjectDir)out\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile><WarningLevel>Level4</WarningLevel><TreatWarningAsError>true</TreatWarningAsError><LanguageStandard_C>stdc17</LanguageStandard_C></ClCompile>
+    <Link><AdditionalDependencies>vhfkm.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+    <DriverSign><FileDigestAlgorithm>sha256</FileDigestAlgorithm></DriverSign>
+  </ItemDefinitionGroup>
+  <ItemGroup><ClCompile Include="driver.c" /><ClInclude Include="bridge.h" /><ClInclude Include="identity.h" /><Inf Include="D6VirtualDeck.inf" /></ItemGroup>
+  <ItemGroup><FilesToPackage Include="$(TargetPath)" /></ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

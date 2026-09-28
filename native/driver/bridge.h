@@ -1,0 +1,8 @@
+#pragma once
+#define IOCTL_D6_KEYS CTL_CODE(FILE_DEVICE_UNKNOWN,0x800,METHOD_BUFFERED,FILE_WRITE_DATA)
+#define IOCTL_D6_POLL CTL_CODE(FILE_DEVICE_UNKNOWN,0x801,METHOD_BUFFERED,FILE_READ_DATA)
+#define IOCTL_D6_STATS CTL_CODE(FILE_DEVICE_UNKNOWN,0x802,METHOD_BUFFERED,FILE_READ_DATA)
+#define D6_RING_SIZE 256
+typedef struct { ULONG Kind; ULONG Length; UCHAR Data[1024]; } D6_EVENT;
+typedef struct { ULONG Version; ULONG Queued; ULONG Dropped; ULONG Reserved; } D6_STATS;
+// Kind 1 = output, 2 = set feature, 3 = get feature (diagnostic).
