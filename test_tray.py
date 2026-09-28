@@ -135,3 +135,4 @@ class TrayLifecycleTests(unittest.TestCase):
             finally: c.quit();c.thread.join(4)
 
 if __name__=='__main__': unittest.main()
+

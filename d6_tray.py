@@ -1,3 +1,4 @@
+from app_paths import app_root
 """D6 Companion Bridge v0.4.1-rc.1, Windows notification area application."""
 import ctypes
 from ctypes import wintypes as w
@@ -9,7 +10,7 @@ import sys
 import threading
 from tray_controller import Controller
 
-ROOT=Path(__file__).resolve().parent
+ROOT=app_root()
 LABELS={'disabled':'Выключен','starting':'Запуск…','connecting':'Подключение к Companion…',
         'connected':'Подключён к Companion','offline':'Companion недоступен',
         'stopping':'Остановка…','error':'Ошибка — откройте журнал'}
@@ -17,7 +18,7 @@ LABELS={'disabled':'Выключен','starting':'Запуск…','connecting':
 def message(text):
     ctypes.windll.user32.MessageBoxW(None,text,'D6 Companion Bridge',0x40)
 
-def main():
+def main(smoke_test=False):
     if os.name!='nt': raise RuntimeError('Tray launcher requires Windows')
     kernel=ctypes.WinDLL('kernel32',use_last_error=True)
     kernel.CreateMutexW.argtypes=[w.LPVOID,w.BOOL,w.LPCWSTR]
@@ -49,7 +50,9 @@ def main():
             icon.title='D6: '+LABELS[state]
             icon.update_menu()
         python=Path(sys.executable).with_name('python.exe')
-        controller=Controller([str(python),'-u',str(ROOT/'d6_worker.py')],ROOT,update)
+        command=([str(ROOT/'D6Tools.exe'),'--worker'] if getattr(sys,'frozen',False)
+                 else [str(python),'-u',str(ROOT/'d6_worker.py')])
+        controller=Controller(command,ROOT,update)
         def open_log(icon,item):
             path=ROOT/'d6_bridge.log'
             if not path.exists(): path=ROOT/'d6_tray.log'
@@ -74,7 +77,12 @@ def main():
             pystray.MenuItem('Выход',exit_app,enabled=lambda item: not controller.quitting))
         def setup(icon):
             icon.visible=True
-            controller.set_enabled(True)
+            if smoke_test:
+                threading.Timer(2,lambda: exit_app(icon,None)).start()
+            elif (ROOT/'screen_map.json').exists():
+                controller.set_enabled(True)
+            else:
+                message('Нужна калибровка: выйдите из трея, запустите D6Tools.exe и выберите 1. Если у вас уже есть screen_map.json, скопируйте его в папку программы и нажмите Включить.')
         icon.run(setup=setup)
     finally:
         if controller:
@@ -82,7 +90,10 @@ def main():
         kernel.CloseHandle(mutex)
 
 if __name__=='__main__':
-    try: main()
+    try: main('--smoke-test' in sys.argv)
     except Exception as e:
         logging.exception('Tray failed')
-        if os.name=='nt': message('Не удалось запустить мост: '+str(e)+'\nЗапустите 01_install.cmd и проверьте d6_tray.log.')
+        if '--smoke-test' in sys.argv: raise
+        if os.name=='nt': message('Не удалось запустить мост: '+str(e)+'\nПроверьте права записи в папку программы и d6_tray.log.')
+
+

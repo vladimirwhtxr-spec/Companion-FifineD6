@@ -79,3 +79,4 @@ class BridgeTest(unittest.TestCase):
         s.key(1,True);self.assertEqual(s.down,set())
 
 if __name__=='__main__':unittest.main()
+

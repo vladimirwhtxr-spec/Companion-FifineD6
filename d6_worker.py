@@ -1,3 +1,4 @@
+from app_paths import app_root
 """Hidden child process. EOF/stop on the private parent pipe means shutdown."""
 import json
 import logging
@@ -8,7 +9,7 @@ import threading
 from d6_bridge import bridge
 
 def main():
-    root=Path(__file__).resolve().parent
+    root=app_root()
     handler=RotatingFileHandler(root/'d6_bridge.log',maxBytes=2_000_000,backupCount=3,encoding='utf-8')
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(levelname)s %(message)s',handlers=[handler])
     stop=threading.Event()
@@ -27,3 +28,4 @@ def main():
         return 1
 
 if __name__=='__main__': sys.exit(main())
+

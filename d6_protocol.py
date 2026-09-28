@@ -16,3 +16,4 @@ def parse_key(report):
         if 1 <= key <= 15 and down in (0, 1):
             return key, bool(down)
     return None
+

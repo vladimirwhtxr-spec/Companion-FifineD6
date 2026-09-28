@@ -1,3 +1,4 @@
+from app_paths import app_root
 """Experimental FIFINE D6 USB / Companion Satellite bridge, v0.4.1-rc.1."""
 import argparse
 import base64
@@ -15,7 +16,7 @@ import time
 from PIL import Image, ImageDraw, ImageFont
 from d6_protocol import VID, PID, PREFIX, command, parse_key
 
-ROOT = Path(__file__).resolve().parent
+ROOT = app_root()
 DEVICE_ID = 'fifine-d6-local'
 SIZE = 112
 
@@ -133,7 +134,7 @@ def calibrate():
         tmp = dest.with_suffix('.tmp')
         tmp.write_text(json.dumps(mapping, indent=2), encoding='utf-8')
         tmp.replace(dest)
-        logging.info('Saved screen_map.json. Start 03_companion.cmd next.')
+        logging.info('Saved screen_map.json. Start D6Companion.exe next.')
     finally:
         device.close()
 
@@ -375,3 +376,4 @@ def main():
     return 0
 
 if __name__=='__main__':raise SystemExit(main())
+
