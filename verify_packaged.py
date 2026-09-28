@@ -3,12 +3,13 @@ import subprocess
 import tempfile
 import shutil
 from pathlib import Path
-root=Path(__file__).resolve().parent/'dist'
+root=Path(__file__).resolve().parent/'dist'/'D6Companion'
 subprocess.run([str(root/'D6Tools.exe'),'--self-test'],check=True,timeout=30)
 # Test the actual console helper with redirected pipes, as started by the tray.
 with tempfile.TemporaryDirectory() as tmp:
     worker=Path(tmp)/'D6Tools.exe'
     shutil.copy2(root/'D6Tools.exe',worker)
+    shutil.copytree(root/'_internal',Path(tmp)/'_internal')
     child=subprocess.Popen([str(worker),'--worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
     try:
         child.wait(timeout=30)

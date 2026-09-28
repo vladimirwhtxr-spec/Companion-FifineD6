@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import sys
 import threading
+import time
 from tray_controller import Controller
 
 ROOT=app_root()
@@ -75,15 +76,32 @@ def main(smoke_test=False):
             pystray.MenuItem('Журнал запуска и трея',lambda icon,item: os.startfile(str(ROOT/'d6_tray.log'))),
             pystray.MenuItem('Открыть папку',lambda icon,item: os.startfile(str(ROOT))),
             pystray.MenuItem('Выход',exit_app,enabled=lambda item: not controller.quitting))
+        smoke_errors=[]
+        def smoke_lifecycle():
+            try:
+                if (ROOT/'screen_map.json').exists():
+                    raise RuntimeError('Smoke test requires a clean folder without screen_map.json')
+                for _ in range(2):
+                    controller.set_enabled(True)
+                    deadline=time.monotonic()+10
+                    while controller.enabled or controller.process is not None:
+                        if time.monotonic()>deadline: raise TimeoutError('Packaged worker did not exit')
+                        time.sleep(.02)
+                    if controller.state!='error': raise RuntimeError('Expected missing-map error')
+            except Exception as exc:
+                smoke_errors.append(exc)
+            finally:
+                exit_app(icon,None)
         def setup(icon):
             icon.visible=True
             if smoke_test:
-                threading.Timer(2,lambda: exit_app(icon,None)).start()
+                threading.Thread(target=smoke_lifecycle,daemon=True).start()
             elif (ROOT/'screen_map.json').exists():
                 controller.set_enabled(True)
             else:
                 message('Нужна калибровка: выйдите из трея, запустите D6Tools.exe и выберите 1. Если у вас уже есть screen_map.json, скопируйте его в папку программы и нажмите Включить.')
         icon.run(setup=setup)
+        if smoke_errors: raise smoke_errors[0]
     finally:
         if controller:
             controller.quit();controller.thread.join()

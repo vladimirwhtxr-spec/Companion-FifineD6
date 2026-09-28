@@ -5,7 +5,7 @@ Python is bundled. Elgato Stream Deck and the D6VirtualDeck driver are not used.
 
 ## Setup
 
-1. Extract the complete ZIP to a writable folder. Keep both EXE files together.
+1. Extract the complete ZIP to a writable folder. Keep both EXE files and the required `_internal` runtime folder together.
 2. Close FIFINE software and any other D6 bridge; connect D6 over USB.
 3. Copy your existing working Companion bridge `screen_map.json` beside the EXEs. Otherwise run `D6Tools.exe`, choose `1`, and press/release each D6 button displaying the requested number. Confirm the final 3×5 grid by typing `YES` on your PC. Abort if numbers overlap or are missing.
 4. Start Companion and enable its Satellite listener on TCP 16622. Default destination: `127.0.0.1:16622`. For another address or port, copy `config.example.json` to `config.json`, edit `host`/`port`, then disable/enable the bridge.

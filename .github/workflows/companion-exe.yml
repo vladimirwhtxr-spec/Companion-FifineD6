@@ -17,17 +17,16 @@ jobs:
           architecture: x64
       - run: python -m pip install -r requirements.txt pyinstaller==6.22.3
       - run: python -m unittest discover -v
-      - run: python -m PyInstaller --noconfirm --clean --onefile --console --noupx --hidden-import hid --name D6Tools tools_app.py
-      - run: python -m PyInstaller --noconfirm --clean --onefile --windowed --noupx --hidden-import pystray._win32 --name D6Companion d6_tray.py
+      - run: python -m PyInstaller --noconfirm --clean companion.spec
       - run: python verify_packaged.py
       - shell: pwsh
         run: |
-          Copy-Item README_RU.md,README_EN.md,LICENSE,config.example.json dist/
-          Remove-Item dist/*.log -ErrorAction SilentlyContinue
-          Get-FileHash dist/*.exe -Algorithm SHA256 | Format-List | Out-File dist/SHA256.txt
+          Copy-Item README_RU.md,README_EN.md,LICENSE,config.example.json dist/D6Companion/
+          Remove-Item dist/D6Companion/*.log -ErrorAction SilentlyContinue
+          Get-FileHash dist/D6Companion/*.exe -Algorithm SHA256 | Format-List | Out-File dist/D6Companion/SHA256.txt
       - uses: actions/upload-artifact@v4
         with:
           name: D6Companion-Windows-x64
-          path: dist/
+          path: dist/D6Companion/
           if-no-files-found: error
           retention-days: 30
